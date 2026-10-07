@@ -69,7 +69,15 @@ contract VaultHandler is Test {
     ///       3) call vault.redeem(amount) as that user
     ///       4) do not forget approve — redeem needs no allowance, but deposit does
     ///      Hint: the two parameters have no names yet. Name them first.
-    function redeem(uint256, uint256) external {}
+    function redeem(uint256 userSeed, uint256 amount) external {
+        address user = users[bound(userSeed, 0, users.length - 1)];
+        uint256 balance = stable.balanceOf(user);
+        if (balance == 0) return;
+        amount = bound(amount, 1, balance);
+        vm.prank(user);
+        vault.redeem(amount);
+        ghost_redeems++;
+    }
 }
 
 contract InvariantTasksTest is Test {
@@ -102,13 +110,13 @@ contract InvariantTasksTest is Test {
     ///      fails, Foundry prints the counterexample call sequence — walk through that
     ///      sequence and you will see exactly how the invariant broke.
     function invariant_CollateralBacksSupply() public view {
-        assertEq(stable.totalSupply(), 0, "TODO Ex6.2");
+        assertGe(vault.totalCollateral(), stable.totalSupply(), "collateral backs supply");
     }
 
     /// TODO Ex6.3 — a second invariant: the vault itself never holds sUSD
     /// @dev Think about why this has to hold: the vault only ever mints sUSD to users and
     ///      should keep none for itself. If this one breaks, what does that mean?
     function invariant_VaultHoldsNoStablecoin() public view {
-        assertEq(stable.balanceOf(address(vault)), 1, "TODO Ex6.3");
+        assertEq(stable.balanceOf(address(vault)), 0, "vault retains no stablecoin");
     }
 }
