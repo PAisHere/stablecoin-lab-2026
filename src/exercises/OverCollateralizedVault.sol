@@ -7,7 +7,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {SimpleStablecoin} from "../SimpleStablecoin.sol";
 import {IPriceFeed} from "./IPriceFeed.sol";
 
-/// @title Over-collateralized vault (Ex5) — four TODOs are waiting for you
+/// @title Over-collateralized vault (Ex5) — collateral valuation and liquidation
 /// @notice Unlike the 1:1 loop in Vault.sol, $1 of collateral deposited here mints at most
 ///         0.667 sUSD (a 150% collateral ratio). Once the collateral ratio falls below
 ///         120%, anyone can take that collateral at a discount by paying sUSD — that is
@@ -63,12 +63,12 @@ contract OverCollateralizedVault {
     }
 
     // ==================================================================
-    // Given to you — no decimal conversion involved, do not touch
+    // Shared accounting: debt and collateral must refer to the same user's position.
     // ==================================================================
 
     /// @notice What one unit of collateral is worth in USD, 8 decimals
-    /// @dev Production code would also check whether updatedAt is stale and whether
-    ///      answer <= 0 — the oracle is an attack surface of its own
+    /// @dev Reject nonpositive answers before unsigned conversion and division. This lab
+    ///      trusts the mock's timestamp; a production oracle would also need freshness checks.
     function collateralPrice() public view returns (uint256) {
         (, int256 answer,,,) = priceFeed.latestRoundData();
         if (answer <= 0) revert ZeroAmount();
@@ -104,20 +104,20 @@ contract OverCollateralizedVault {
     }
 
     // ==================================================================
-    // TODO Ex5.1 — decimal conversion
+    // Ex5.1 — decimal conversion
     // ==================================================================
 
     /// @notice Convert `amount` units of collateral (18 decimals) into sUSD smallest units
     ///         (6 decimals)
-    /// @dev The product carries 18 + 8 = 26 decimals and you want 6 — divide by 10 to the
-    ///      what?
+    /// @dev Dividing the 26-decimal product by 1e20 aligns value with 6-decimal debt.
+    ///      Integer division rounds down so fractional stablecoin units cannot inflate backing.
     function collateralValue(uint256 amount) public view returns (uint256) {
         // 18 collateral decimals + 8 price decimals - 6 stablecoin decimals = 20.
         return amount * collateralPrice() / 1e20;
     }
 
     // ==================================================================
-    // TODO Ex5.2 — minting has to leave enough collateral behind
+    // Ex5.2 — minting has to leave enough collateral behind
     // ==================================================================
 
     /// @notice Mint `amount` of sUSD, but the collateral ratio afterwards must not fall
@@ -134,11 +134,14 @@ contract OverCollateralizedVault {
     }
 
     // ==================================================================
-    // TODO Ex5.3 — withdrawing collateral must not leave the position unhealthy either
+    // Ex5.3 — withdrawing collateral must not leave the position unhealthy either
     // ==================================================================
 
     /// @notice Withdraw `amount` units of collateral; the ratio afterwards must not fall
     ///         below MIN_COLLATERAL_RATIO
+    /// @dev Check the remaining collateral, not the pre-withdrawal balance, so a healthy
+    ///      position cannot withdraw its backing. A failed ratio check or transfer rolls
+    ///      back the deduction; debt-free users can withdraw without a ratio constraint.
     function redeemCollateral(uint256 amount) external {
         if (amount == 0) revert ZeroAmount();
         if (amount > collateralOf[msg.sender]) revert InsufficientCollateral();
@@ -149,15 +152,16 @@ contract OverCollateralizedVault {
     }
 
     // ==================================================================
-    // TODO Ex5.4 — liquidation
+    // Ex5.4 — liquidation
     // ==================================================================
 
     /// @notice Once the ratio falls below LIQUIDATION_RATIO, anyone may burn that user's
     ///         entire sUSD debt and seize collateral worth
     ///         "debt value × (100% + LIQUIDATION_BONUS)".
-    /// @dev Do not forget: the collateral may not be enough to pay that bonus. In that case
-    ///      take everything the user has left — the shortfall is bad debt, and that is
-    ///      exactly where liquidation is most fragile.
+    /// @dev Cap seizure at this user's collateral so liquidation cannot spend another
+    ///      user's backing. The liquidator still burns the full debt: this implementation
+    ///      leaves no recorded debt after success, but inadequate compensation can deter
+    ///      liquidation. If burning or payment fails, all position changes revert together.
     function liquidate(address user) external {
         if (collateralRatio(user) >= LIQUIDATION_RATIO) revert NotLiquidatable();
         uint256 debt = debtOf[user];
