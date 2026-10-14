@@ -268,3 +268,31 @@ These have no standard answers. They are the real point of this lab:
    `totalCollateral()` invariant?
 
 Question 4 is the door into next week's RWA lab.
+
+## Architecture
+
+![Mint and redeem architecture](assets/arch1.png)
+
+This flowchart outlines the operational flow of a collateralized stablecoin system with permissioned minting and administrative governance.
+
+To mint stablecoins, a Holder first approves the Vault contract to spend their **MockUSDC** collateral (a 6-decimal token), and then deposits a specified collateral amount into the Vault. The Vault subsequently calls `transferFrom` to pull the approved MockUSDC from the Holder’s address into the vault, and mints the corresponding amount of **SimpleStablecoin** (also 6-decimal precision) to the Holder as the minted asset.
+
+For redemption, the Holder initiates a redeem request with a set amount to the Vault. The Vault first burns the requested amount of SimpleStablecoin from the Holder’s balance, and then transfers the equivalent amount of MockUSDC collateral back to the Holder.
+
+On the governance side, an **Administrator** grants the `MINTER_ROLE` permission to the Vault, which authorizes the contract to mint stablecoins. The Administrator also holds elevated privileges over the SimpleStablecoin contract, including role management and emergency pause control.
+
+![Over-collateralization and liquidation architecture](assets/arch2.png)
+
+This flowchart depicts the core mechanics of an overcollateralized decentralized stablecoin protocol.
+
+The Borrower first deposits mWETH (18 decimal precision) into the **OverCollateralizedVault** as collateral backing. In parallel, the **MockPriceFeed** (8 decimal precision) delivers the USD-denominated price of the collateral to the vault for real-time collateralization ratio calculation.
+
+When the collateralization ratio meets the minimum 150% threshold, the vault mints sUSD (6 decimal precision) and transfers the stablecoin to the Borrower. If the collateralization ratio later drops below 120%, a **Liquidator** may step in to repay the borrower’s full outstanding debt in sUSD to the vault. The vault then burns the repaid sUSD through the **SimpleStablecoin** contract, and distributes the seized collateral plus a 10% liquidation bonus — capped at the total available collateral in the vault — to the Liquidator as incentive.
+
+## Deployment (Sepolia)
+
+All three contracts were deployed to Sepolia (chain ID: 11155111) and verified on Etherscan, as recorded in [sepolia-deploy-verified.txt](evidence/sepolia-deploy-verified.txt).
+
+- **MockUSDC**: `0xb13D808f7368A3B275080bdFbe97509b401cABF2` — [View on Etherscan](https://sepolia.etherscan.io/address/0xb13d808f7368a3b275080bdfbe97509b401cabf2)
+- **SimpleStablecoin**: `0xfe88fCfD9cEB5494FBfD6E3ae2B1024df08aCe59` — [View on Etherscan](https://sepolia.etherscan.io/address/0xfe88fcfd9ceb5494fbfd6e3ae2b1024df08ace59)
+- **Vault**: `0x0D2CA090c75509BBEA18b2C1449c2247a45E3C76` — [View on Etherscan](https://sepolia.etherscan.io/address/0x0d2ca090c75509bbea18b2c1449c2247a45e3c76)
