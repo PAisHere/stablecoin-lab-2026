@@ -8,19 +8,11 @@ import {SimpleStablecoin} from "../../src/SimpleStablecoin.sol";
 import {Vault} from "../../src/Vault.sol";
 
 /// @title Ex6 — invariant testing
-/// @notice Every test so far set up a situation and then checked the result. Invariant
-///         testing flips that around: let the machine call operations randomly and
-///         repeatedly, then ask "no matter how it thrashes, does this property still
-///         hold?"
-///
-///         That is what a stablecoin should be tested like — you will never guess the
-///         order an attacker does things in.
-///
-///         Acceptance: make exercise (it should be red until you are finished)
-///
-/// @dev How it works: Foundry picks functions from the handler at random, picks random
-///      arguments, and calls them N times in a row; after each round it runs every
-///      invariant_* function. The first failed assertion is a counterexample.
+/// @notice Random deposit/redeem sequences check accounting across operation orders
+///         that isolated examples may miss, with balances carried between calls.
+/// @dev Acceptance: make exercise. The handler bounds inputs to valid user operations
+///      so the campaign explores state changes instead of mostly reverting. Its scope
+///      excludes direct token transfers, privileged issuance and role changes.
 contract VaultHandler is Test {
     MockUSDC internal usdc;
     SimpleStablecoin internal stable;
@@ -28,7 +20,8 @@ contract VaultHandler is Test {
 
     address[3] public users;
 
-    /// @dev Bookkeeping: proves the fuzzer really reached the handler instead of idling
+    /// @dev Count completed operations, excluding early returns, to help inspect whether
+    ///      a campaign exercised accounting. The invariants do not assert these counters.
     uint256 public ghost_deposits;
     uint256 public ghost_redeems;
 
@@ -45,8 +38,8 @@ contract VaultHandler is Test {
         }
     }
 
-    /// @dev Given to you — this is the standard shape of "pick a random argument and keep it
-    ///      inside a valid range"
+    /// @dev Bound deposits by the selected user's funds to avoid irrelevant balance
+    ///      failures. Approving as that user permits Vault's collateral transferFrom.
     function deposit(uint256 userSeed, uint256 amount) external {
         address user = users[bound(userSeed, 0, users.length - 1)];
 
@@ -62,13 +55,10 @@ contract VaultHandler is Test {
         ghost_deposits++;
     }
 
-    /// TODO Ex6.1 — implement redemption
-    /// @dev Requirements:
-    ///       1) pick one user at random (a user may hold 0 sUSD — if so, return early)
-    ///       2) bound amount to [1, that user's sUSD balance]
-    ///       3) call vault.redeem(amount) as that user
-    ///       4) do not forget approve — redeem needs no allowance, but deposit does
-    ///      Hint: the two parameters have no names yet. Name them first.
+    /// @notice Ex6.1 — redemption within the selected user's balance
+    /// @dev Skip empty balances because no positive redeem amount exists. Bounding the
+    ///      amount keeps the campaign on valid state transitions. No sUSD approval is
+    ///      needed: the vault burns the caller's tokens using its MINTER_ROLE.
     function redeem(uint256 userSeed, uint256 amount) external {
         address user = users[bound(userSeed, 0, users.length - 1)];
         uint256 balance = stable.balanceOf(user);
@@ -96,7 +86,8 @@ contract InvariantTasksTest is Test {
 
         handler = new VaultHandler(usdc, stable, vault);
 
-        // Let the fuzzer call only the handler's deposit / redeem, not its other functions
+        // Restrict calls to modeled user operations so helper methods and privileged
+        // token functions cannot invalidate the assumptions behind these invariants.
         bytes4[] memory selectors = new bytes4[](2);
         selectors[0] = VaultHandler.deposit.selector;
         selectors[1] = VaultHandler.redeem.selector;
@@ -104,18 +95,18 @@ contract InvariantTasksTest is Test {
         targetContract(address(handler));
     }
 
-    /// TODO Ex6.2 — the main invariant: collateral is never less than the supply
-    /// @dev The assertion below is wrong on purpose (it asserts the supply is 0), which is
-    ///      why it goes red. Turn it into the property you actually want to defend. When it
-    ///      fails, Foundry prints the counterexample call sequence — walk through that
-    ///      sequence and you will see exactly how the invariant broke.
+    /// @notice Ex6.2 — collateral backs all outstanding supply
+    /// @dev Both tokens use 6 decimals, so raw balances are comparable. Use >= because
+    ///      excess reserves do not break backing; equality is stronger than required.
+    ///      This deposit/redeem campaign does not establish safety against malicious minters.
     function invariant_CollateralBacksSupply() public view {
         assertGe(vault.totalCollateral(), stable.totalSupply(), "collateral backs supply");
     }
 
-    /// TODO Ex6.3 — a second invariant: the vault itself never holds sUSD
-    /// @dev Think about why this has to hold: the vault only ever mints sUSD to users and
-    ///      should keep none for itself. If this one breaks, what does that mean?
+    /// @notice Ex6.3 — the modeled mint/redeem loop leaves no sUSD in the vault
+    /// @dev Deposits mint to users and redemptions burn from them, so neither operation
+    ///      should accumulate sUSD here. This property relies on the handler's scope:
+    ///      an unsolicited ERC20 transfer to the vault would legitimately violate it.
     function invariant_VaultHoldsNoStablecoin() public view {
         assertEq(stable.balanceOf(address(vault)), 0, "vault retains no stablecoin");
     }

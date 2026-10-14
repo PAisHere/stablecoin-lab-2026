@@ -9,13 +9,10 @@ import {MockPriceFeed} from "../../src/exercises/MockPriceFeed.sol";
 import {OverCollateralizedVault} from "../../src/exercises/OverCollateralizedVault.sol";
 
 /// @title Ex5 — over-collateralization + liquidation
-/// @notice These tests are your acceptance criteria: fill in the four TODOs in
-///         src/exercises/OverCollateralizedVault.sol and turn them all green.
-///
-///         Acceptance: make exercise (it should be red until you are finished)
-/// @dev Everything here turns on two numbers:
-///        price 2000e8  — 1 mWETH is worth $2000
-///        collateral 18 decimals / stablecoin 6 decimals — one conversion is 10^20
+/// @notice Validate Ex5.1–Ex5.4 with accepted and rejected positions, price shocks,
+///         and capped liquidation to distinguish accounting from liquidator incentives.
+/// @dev Acceptance: make exercise. A 2000e8 price means $2000 per mWETH; the 18-decimal
+///      collateral and 8-decimal price require division by 1e20 for 6-decimal sUSD debt.
 contract OverCollateralTasksTest is Test {
     MockWETH internal weth;
     SimpleStablecoin internal stable;
@@ -89,7 +86,9 @@ contract OverCollateralTasksTest is Test {
         vault.mintStable(1400e6);
     }
 
-    /// @dev The boundary: 150% is exactly legal, one more unit reverts
+    /// @dev 1333 and 1334 whole sUSD straddle the 150% threshold at this price, checking
+    ///      that truncated ratios accept 150 and reject 149. This is not a one-base-unit
+    ///      boundary test: the two debts differ by 1e6 smallest units.
     function test_Ex5_Mint_ExactRatioBoundary() public {
         _deposit(alice, 1e18);
         _deposit(bob, 1e18);
@@ -174,9 +173,10 @@ contract OverCollateralTasksTest is Test {
         vault.liquidate(alice);
     }
 
-    /// @dev When the price falls just a little below 120%, the bonus can exceed the collateral the
-    ///      user has left — then the liquidator can only take what remains, and the shortfall is
-    ///      bad debt. This one is a reminder that liquidation itself can go wrong.
+    /// @dev At 100% backing, the collateral covers principal but not the 10% bonus.
+    ///      Capping seizure avoids overdrawing the position while the full debt is burned.
+    ///      Thus this test demonstrates lost liquidator compensation, not residual debt;
+    ///      a rational liquidator may decline a similarly unattractive transaction.
     function test_Ex5_Liquidate_CapsSeizureAtAvailableCollateral() public {
         _deposit(alice, 1e18);
         vm.prank(alice);
@@ -194,7 +194,8 @@ contract OverCollateralTasksTest is Test {
     }
 
     // ==================================================================
-    // Invariant: no minting path may push the supply above the value of the collateral
+    // Fuzz property: maximum permitted minting stays backed at the fixed mock price.
+    // Later price shocks and privileged issuance are outside this test's operation sequence.
     // ==================================================================
 
     function testFuzz_Ex5_SupplyBackedByValue(uint96 raw) public {
