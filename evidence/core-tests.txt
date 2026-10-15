@@ -1,0 +1,14 @@
+forge test --no-match-path 'test/{challenges,exercises}/*' -vv
+No files changed, compilation skipped
+
+Ran 7 tests for test/Stablecoin.t.sol:StablecoinTest
+[PASS] testFuzz_Invariant_CollateralBacksSupply(uint96) (runs: 256, μ: 252727, ~: 252746)
+[PASS] test_Deposit_MintsOneToOne() (gas: 271640)
+[PASS] test_Mint_RevertsForNonMinter() (gas: 43275)
+[PASS] test_Pause_BlocksTransfers() (gas: 316234)
+[PASS] test_Redeem_BurnsAndReturnsCollateral() (gas: 334921)
+[PASS] test_Redeem_RevertsOnEmptyVault() (gas: 37575)
+[PASS] test_Redeem_RevertsOnZeroAmount() (gas: 32141)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 30.48ms (29.74ms CPU time)
+
+Ran 1 test suite in 31.30ms (30.48ms CPU time): 7 tests passed, 0 failed, 0 skipped (7 total tests)

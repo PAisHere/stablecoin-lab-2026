@@ -1,0 +1,118 @@
+[⠊] Compiling...
+[⠊] Compiling 46 files with Solc 0.8.24
+[⠒] Solc 0.8.24 finished in 1.93s
+Compiler run successful!
+Script ran successfully.
+
+== Logs ==
+  admin            : 0xC187bB83855BDf8bB2CBA2738423eFb9B492F881
+  MockUSDC         : 0xb13D808f7368A3B275080bdFbe97509b401cABF2
+  SimpleStablecoin : 0xfe88fCfD9cEB5494FBfD6E3ae2B1024df08aCe59
+  Vault            : 0x0D2CA090c75509BBEA18b2C1449c2247a45E3C76
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 11155111
+
+Estimated max fee per gas: 0.00100003 gwei
+Estimated base fee per gas: 0.000000015 gwei
+Estimated max priority fee per gas: 0.001 gwei
+
+Estimated total gas used for script: 19900820
+
+Estimated amount required: 0.0000199014170246 ETH
+
+==========================
+                                                              ##### sepolia                                                 ✅  [Success] Hash: 0xdb67f4eef7160e4834e72b696022c6450c8c0906be55e7f462a315e324b0f3a9                                      Contract: MockUSDC                                            Contract Address: 0xb13D808f7368A3B275080bdFbe97509b401cABF2  Block: 11886311                                               Paid: 0.000003397487961555 ETH (3397437 gas * 0.001000015 gwei)                                                                                                                           
+                                                              ##### sepolia                                                 ✅  [Success] Hash: 0xd8f3d5350af527789b987511f2377dcf8d03f25660db156d9cff35798a855f75                                      Contract: SimpleStablecoin                                    Contract Address: 0xfe88fCfD9cEB5494FBfD6E3ae2B1024df08aCe59  Block: 11886312                                               Paid: 0.000006302681538805 ETH (6302587 gas * 0.001000015 gwei)                                                                                                                           
+                                                              ##### sepolia                                                 ✅  [Success] Hash: 0x0b4f5bd048d7d74842458f1dccf55bd69bcba4a2d86f9c5df2dfaba7abea8039                                      Contract: Vault                                               Contract Address: 0x0D2CA090c75509BBEA18b2C1449c2247a45E3C76  Block: 11886313                                               Paid: 0.000003047766715815 ETH (3047721 gas * 0.001000015 gwei)                                                                                                                           
+                                                              ##### sepolia                                                 ✅  [Success] Hash: 0x0c4cc5fdf2c15b4d7b653d16e505c8a580d136e3e9ed51e26cf97c5dabf99953                                      Contract: SimpleStablecoin                                    Function: grantRole(bytes32,address)                          Block: 11886314                                               Paid: 0.000000133513002665 ETH (133511 gas * 0.001000015 gwei)                                                              
+✅ Sequence #1 on sepolia | Total Paid: 0.00001288144921884 ETH (12881256 gas * avg 0.001000015 gwei)                                                                                     
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+##
+Start verification for (3) contracts
+Start verifying contract `0xb13D808f7368A3B275080bdFbe97509b401cABF2` deployed on sepolia
+EVM version: cancun
+Compiler version: 0.8.24
+Optimizations:    200
+
+Verifying on etherscan...
+Submitting verification for [src/MockUSDC.sol:MockUSDC] 0xb13D808f7368A3B275080bdFbe97509b401cABF2.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `hfd1xyhcwdlqfzyppgnaumrraugfikpnnqrwxniyheezudqnx2`
+        URL: https://sepolia.etherscan.io/address/0xb13d808f7368a3b275080bdfbe97509b401cabf2
+
+Verifying on sourcify...
+Submitting verification for [MockUSDC] 0xb13D808f7368A3B275080bdFbe97509b401cABF2.
+Submitted contract for verification:
+        Verification Job ID: `e58dec4c-bb94-47a3-9d79-5c341d65301b`
+        URL: https://sourcify.dev/server/verify-ui/jobs/e58dec4c-bb94-47a3-9d79-5c341d65301b
+
+Waiting for etherscan verification result...
+Contract verification status:
+Response: `NOTOK`
+Details: `Already Verified`
+Contract source code already verified
+Start verifying contract `0xfe88fCfD9cEB5494FBfD6E3ae2B1024df08aCe59` deployed on sepolia
+EVM version: cancun
+Compiler version: 0.8.24
+Optimizations:    200
+Constructor args: 000000000000000000000000c187bb83855bdf8bb2cba2738423efb9b492f881
+
+Verifying on etherscan...
+Submitting verification for [src/SimpleStablecoin.sol:SimpleStablecoin] 0xfe88fCfD9cEB5494FBfD6E3ae2B1024df08aCe59.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `rwuamvemscistcey3q82r2ppsfysxn5shhjttd4mibngfrk3jw`
+        URL: https://sepolia.etherscan.io/address/0xfe88fcfd9ceb5494fbfd6e3ae2b1024df08ace59
+
+Verifying on sourcify...
+Submitting verification for [SimpleStablecoin] 0xfe88fCfD9cEB5494FBfD6E3ae2B1024df08aCe59.
+Submitted contract for verification:
+        Verification Job ID: `770eaee0-95d0-434d-a37a-980c944d2e73`
+        URL: https://sourcify.dev/server/verify-ui/jobs/770eaee0-95d0-434d-a37a-980c944d2e73
+
+Waiting for etherscan verification result...
+Contract verification status:
+Response: `NOTOK`
+Details: `Pending in queue`
+Warning: Verification is still pending...; waiting 5 seconds before trying again (4 tries remaining)
+Contract verification status:
+Response: `NOTOK`
+Details: `Already Verified`
+Contract source code already verified
+Start verifying contract `0x0D2CA090c75509BBEA18b2C1449c2247a45E3C76` deployed on sepolia
+EVM version: cancun
+Compiler version: 0.8.24
+Optimizations:    200
+Constructor args: 000000000000000000000000b13d808f7368a3b275080bdfbe97509b401cabf2000000000000000000000000fe88fcfd9ceb5494fbfd6e3ae2b1024df08ace59
+
+Verifying on etherscan...
+Submitting verification for [src/Vault.sol:Vault] 0x0D2CA090c75509BBEA18b2C1449c2247a45E3C76.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `bzgvapz5i6xnf4ys9csm5qlmjffia1uvybc5cm7wtpkxpmwi8p`
+        URL: https://sepolia.etherscan.io/address/0x0d2ca090c75509bbea18b2c1449c2247a45e3c76
+
+Verifying on sourcify...
+Submitting verification for [Vault] 0x0D2CA090c75509BBEA18b2C1449c2247a45E3C76.
+Submitted contract for verification:
+        Verification Job ID: `19c65cf7-9909-43c4-b233-0ef6f0f09e17`
+        URL: https://sourcify.dev/server/verify-ui/jobs/19c65cf7-9909-43c4-b233-0ef6f0f09e17
+
+Waiting for etherscan verification result...
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+All (3) contracts were verified!
+
+Transactions saved to: /workspaces/stablecoin-lab-2026/broadcast/Deploy.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /workspaces/stablecoin-lab-2026/cache/Deploy.s.sol/11155111/run-latest.json

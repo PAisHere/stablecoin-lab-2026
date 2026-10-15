@@ -1,0 +1,53 @@
+No files changed, compilation skipped
+
+Ran 7 tests for test/exercises/01_LoopTasks.t.sol:LoopTasksTest
+[PASS] test_Ex2_DecimalsTrap() (gas: 272841)
+[PASS] test_Ex2_DepositIncreasesSupplyByExactly(uint96) (runs: 256, μ: 284002, ~: 283993)
+[PASS] test_Ex4_AttackerCannotBurnOthersBalance() (gas: 282097)
+[PASS] test_Ex4_Mint_RevertsForNonMinter() (gas: 44049)
+[PASS] test_Ex4_Pause_BlocksRedeem() (gas: 345280)
+[PASS] test_Ex4_Pause_BlocksTransfers() (gas: 329546)
+[PASS] test_Ex4_VaultHoldsTheKey_CanBurnAnyonesBalance() (gas: 321234)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 96.43ms (95.28ms CPU time)
+
+Ran 10 tests for test/exercises/03_OverCollateralTasks.t.sol:OverCollateralTasksTest
+[PASS] testFuzz_Ex5_SupplyBackedByValue(uint96) (runs: 256, μ: 274086, ~: 220546)
+[PASS] test_Ex5_CollateralValue_ConvertsDecimalsCorrectly() (gas: 174085)
+[PASS] test_Ex5_Liquidate_CapsSeizureAtAvailableCollateral() (gas: 420553)
+[PASS] test_Ex5_Liquidate_RevertsWhenHealthy() (gas: 287328)
+[PASS] test_Ex5_Liquidate_SeizesCollateral() (gas: 476861)
+[PASS] test_Ex5_Mint_ExactRatioBoundary() (gas: 439287)
+[PASS] test_Ex5_Mint_HappyPath() (gas: 284514)
+[PASS] test_Ex5_Mint_RevertsWhenUndercollateralized() (gas: 196076)
+[PASS] test_Ex5_Redeem_AtExactRatioSucceeds() (gas: 327462)
+[PASS] test_Ex5_Redeem_RevertsIfItBreachesRatio() (gas: 288393)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 107.50ms (106.48ms CPU time)
+
+Ran 7 tests for test/Stablecoin.t.sol:StablecoinTest
+[PASS] testFuzz_Invariant_CollateralBacksSupply(uint96) (runs: 256, μ: 252721, ~: 252710)
+[PASS] test_Deposit_MintsOneToOne() (gas: 271640)
+[PASS] test_Mint_RevertsForNonMinter() (gas: 43275)
+[PASS] test_Pause_BlocksTransfers() (gas: 316234)
+[PASS] test_Redeem_BurnsAndReturnsCollateral() (gas: 334921)
+[PASS] test_Redeem_RevertsOnEmptyVault() (gas: 37575)
+[PASS] test_Redeem_RevertsOnZeroAmount() (gas: 32141)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 79.72ms (76.37ms CPU time)
+
+Ran 1 test for test/exercises/02_InvariantTasks.t.sol:InvariantTasksTest
+[PASS]
+InvariantTasksTest invariants:
+[PASS] invariant_CollateralBacksSupply
+[PASS] invariant_VaultHoldsNoStablecoin
+ InvariantTasksTest invariants (runs: 256, calls: 128000, reverts: 0)
+
+╭--------------+----------+-------+---------+----------╮
+| Contract     | Selector | Calls | Reverts | Discards |
++======================================================+
+| VaultHandler | deposit  | 63948 | 0       | 0        |
+|--------------+----------+-------+---------+----------|
+| VaultHandler | redeem   | 64052 | 0       | 0        |
+╰--------------+----------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 18.87s (18.87s CPU time)
+
+Ran 4 test suites in 18.98s (19.16s CPU time): 25 tests passed, 0 failed, 0 skipped (25 total tests)

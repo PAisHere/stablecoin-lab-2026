@@ -1,0 +1,46 @@
+forge test --match-path 'test/exercises/*.t.sol' -vv
+Compiling 3 files with Solc 0.8.24
+Solc 0.8.24 finished in 2.72s
+Compiler run successful!
+
+Ran 7 tests for test/exercises/01_LoopTasks.t.sol:LoopTasksTest
+[PASS] test_Ex2_DecimalsTrap() (gas: 272841)
+[PASS] test_Ex2_DepositIncreasesSupplyByExactly(uint96) (runs: 256, μ: 284006, ~: 284029)
+[PASS] test_Ex4_AttackerCannotBurnOthersBalance() (gas: 282097)
+[PASS] test_Ex4_Mint_RevertsForNonMinter() (gas: 44049)
+[PASS] test_Ex4_Pause_BlocksRedeem() (gas: 345280)
+[PASS] test_Ex4_Pause_BlocksTransfers() (gas: 329546)
+[PASS] test_Ex4_VaultHoldsTheKey_CanBurnAnyonesBalance() (gas: 321234)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 51.04ms (49.02ms CPU time)
+
+Ran 10 tests for test/exercises/03_OverCollateralTasks.t.sol:OverCollateralTasksTest
+[PASS] testFuzz_Ex5_SupplyBackedByValue(uint96) (runs: 256, μ: 277730, ~: 220546)
+[PASS] test_Ex5_CollateralValue_ConvertsDecimalsCorrectly() (gas: 174085)
+[PASS] test_Ex5_Liquidate_CapsSeizureAtAvailableCollateral() (gas: 420553)
+[PASS] test_Ex5_Liquidate_RevertsWhenHealthy() (gas: 287328)
+[PASS] test_Ex5_Liquidate_SeizesCollateral() (gas: 476861)
+[PASS] test_Ex5_Mint_ExactRatioBoundary() (gas: 439287)
+[PASS] test_Ex5_Mint_HappyPath() (gas: 284514)
+[PASS] test_Ex5_Mint_RevertsWhenUndercollateralized() (gas: 196076)
+[PASS] test_Ex5_Redeem_AtExactRatioSucceeds() (gas: 327462)
+[PASS] test_Ex5_Redeem_RevertsIfItBreachesRatio() (gas: 288393)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 46.58ms (45.72ms CPU time)
+
+Ran 1 test for test/exercises/02_InvariantTasks.t.sol:InvariantTasksTest
+[PASS]
+InvariantTasksTest invariants:
+[PASS] invariant_CollateralBacksSupply
+[PASS] invariant_VaultHoldsNoStablecoin
+ InvariantTasksTest invariants (runs: 256, calls: 128000, reverts: 0)
+
+╭--------------+----------+-------+---------+----------╮
+| Contract     | Selector | Calls | Reverts | Discards |
++======================================================+
+| VaultHandler | deposit  | 64153 | 0       | 0        |
+|--------------+----------+-------+---------+----------|
+| VaultHandler | redeem   | 63847 | 0       | 0        |
+╰--------------+----------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 15.61s (15.60s CPU time)
+
+Ran 3 test suites in 15.61s (15.71s CPU time): 18 tests passed, 0 failed, 0 skipped (18 total tests)

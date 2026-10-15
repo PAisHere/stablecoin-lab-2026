@@ -1,0 +1,16 @@
+bash scripts/doctor.sh
+stablecoin lab · environment self-check
+
+  [32m✓[0m forge  /usr/local/bin/forge
+  [32m✓[0m cast  /usr/local/bin/cast
+  [32m✓[0m anvil  /usr/local/bin/anvil
+
+  [32m✓[0m lib/forge-std is in place
+  [32m✓[0m lib/openzeppelin-contracts is in place
+
+  compiling and running the core tests, about 30 seconds ...
+  [32m✓[0m make test passed (7 tests passed)
+
+----------------------------------------
+6 passed, 0 failed
+ready for class.
